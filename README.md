@@ -10,8 +10,7 @@ I like it, and hopefully someone else will too. 🎉
 ![The menu bar icon](docs/menubar.png)
 ![The menu](docs/menu.png)
 
-No Location, no Accessibility, no Full Disk Access — no usage-description keys in the
-bundle, no entitlements in the binary.
+Needs no permissions.
 
 ## Notes
 
@@ -29,8 +28,8 @@ bundle, no entitlements in the binary.
 Download the [latest release](https://github.com/zhenweiding-dev/duostatus/releases/latest),
 open the `.dmg`, drag **DuoStatus** into **Applications**.
 
-The app isn't notarized, so macOS blocks the first launch. **System Settings → Privacy &
-Security** → **Open Anyway**.
+Not notarized, so the first launch is blocked: **System Settings → Privacy & Security**
+→ **Open Anyway**.
 
 Or build it:
 
