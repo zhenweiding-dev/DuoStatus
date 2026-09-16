@@ -6,6 +6,7 @@ cd "$(dirname "$0")"
 NAME="DuoStatus"
 APP="build/$NAME.app"
 BUNDLE_ID="io.github.zhenweiding-dev.duostatus"
+VERSION="1.0.0"
 
 # Universal, so the same bundle runs on Apple silicon and Intel.
 ARCHS=(--arch arm64 --arch x86_64)
@@ -23,6 +24,22 @@ cp Resources/Info.plist "$APP/Contents/Info.plist"
 echo "==> Signing (ad-hoc; fine for local use)"
 codesign --force --sign - --identifier "$BUNDLE_ID" "$APP"
 
+if [[ "${1:-}" == "--dmg" ]]; then
+  echo "==> Building $NAME-$VERSION.dmg"
+  STAGE="$(mktemp -d)"
+  # ditto + xattr: copying with cp picks up Finder metadata that invalidates the
+  # signature once it is inside the image.
+  ditto "$APP" "$STAGE/$NAME.app"
+  xattr -cr "$STAGE/$NAME.app"
+  ln -s /Applications "$STAGE/Applications"
+  rm -f "build/$NAME-$VERSION.dmg"
+  hdiutil create -volname "$NAME" -srcfolder "$STAGE" -ov -format UDZO \
+      "build/$NAME-$VERSION.dmg" >/dev/null
+  rm -rf "$STAGE"
+  echo "Done: build/$NAME-$VERSION.dmg"
+  exit 0
+fi
+
 if [[ "${1:-}" == "--install" ]]; then
   echo "==> Installing to /Applications"
   pkill -x "$NAME" 2>/dev/null || true
@@ -37,5 +54,5 @@ if [[ "${1:-}" == "--install" ]]; then
   echo "Launched — look at the right side of the menu bar."
 else
   echo "Done: $APP"
-  echo "Try it:  open $APP        Install:  ./build.sh --install"
+  echo "Try it:  open $APP        Install:  ./build.sh --install        Disk image:  ./build.sh --dmg"
 fi

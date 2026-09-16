@@ -40,14 +40,18 @@ diffing the hash against a baseline.
 
 ## Install
 
-Download the [latest release](https://github.com/zhenweiding-dev/duostatus/releases/latest)
-and drag `DuoStatus.app` into `/Applications`. It's ad-hoc signed rather than notarized,
-so the first launch needs **right-click → Open** once.
+Download the [latest release](https://github.com/zhenweiding-dev/duostatus/releases/latest),
+open the `.dmg`, and drag **DuoStatus** onto the **Applications** folder.
+
+The first launch is blocked, because the app isn't notarized — that needs a paid Apple
+developer account. To let it through: **System Settings → Privacy & Security**, scroll to
+the bottom, and click **Open Anyway**. Only needed once.
 
 Or build it yourself:
 
 ```bash
-./build.sh --install
+./build.sh --install     # build and install to /Applications
+./build.sh --dmg         # build the disk image
 ```
 
 macOS 14+, universal (Apple silicon and Intel). Building needs Xcode 27.
