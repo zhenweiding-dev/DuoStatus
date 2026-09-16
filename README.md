@@ -9,6 +9,14 @@ I like it, and hopefully someone else will too. 🎉
 
 ![The icon and menu](docs/menu.png)
 
+## It asks for nothing
+
+No Location, no Accessibility, no Full Disk Access, no prompts of any kind. There isn't
+a single usage-description key in the bundle and the binary carries no entitlements.
+
+That wasn't free — Wi-Fi signal and network latency are the two things that normally
+drag a permission prompt in with them. Both turned out to be avoidable; see below.
+
 ## Some things I ran into
 
 A few of these cost real time, so in case they save someone else's:
@@ -23,8 +31,8 @@ A few of these cost real time, so in case they save someone else's:
   with whatever image you hand it — 32pt still wasn't clipped. I had the badge pinned
   at 20pt for a while because I assumed otherwise.
 - **Location permission only gates the Wi-Fi *name*.** SSID and BSSID come back `nil`
-  without it, but RSSI, noise, channel, PHY mode and transmit rate all read fine. So the
-  signal bars work with no permissions at all — the app asks for nothing.
+  without it, but RSSI, noise, channel, PHY mode and transmit rate all read fine, so the
+  signal bars cost nothing.
 - **Battery health isn't in IORegistry.** Nothing in the registry equals the percentage
   System Settings shows, and deriving it from `NominalChargeCapacity / DesignCapacity`
   lands a point off. `system_profiler SPPowerDataType` takes 0.09s and is authoritative.
@@ -43,9 +51,9 @@ diffing the hash against a baseline.
 Download the [latest release](https://github.com/zhenweiding-dev/duostatus/releases/latest),
 open the `.dmg`, and drag **DuoStatus** onto the **Applications** folder.
 
-The first launch is blocked, because the app isn't notarized — that needs a paid Apple
-developer account. To let it through: **System Settings → Privacy & Security**, scroll to
-the bottom, and click **Open Anyway**. Only needed once.
+macOS blocks the first launch: the app is signed locally but not notarized, which needs a
+paid Apple developer account I don't have. Let it through once via **System Settings →
+Privacy & Security** — scroll to the bottom and click **Open Anyway**.
 
 Or build it yourself:
 
@@ -55,5 +63,4 @@ Or build it yourself:
 ```
 
 macOS 14+, universal (Apple silicon and Intel). Building needs Xcode 27.
-The app itself asks for no system permissions.
 English and 简体中文, following the system language unless you pick one.
