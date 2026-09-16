@@ -7,9 +7,12 @@ NAME="DuoStatus"
 APP="build/$NAME.app"
 BUNDLE_ID="io.github.zhenweiding-dev.duostatus"
 
-echo "==> Building"
-swift build -c release
-BIN="$(swift build -c release --show-bin-path)/$NAME"
+# Universal, so the same bundle runs on Apple silicon and Intel.
+ARCHS=(--arch arm64 --arch x86_64)
+
+echo "==> Building (universal)"
+swift build -c release "${ARCHS[@]}"
+BIN="$(swift build -c release "${ARCHS[@]}" --show-bin-path)/$NAME"
 
 echo "==> Assembling $APP"
 rm -rf "$APP"
