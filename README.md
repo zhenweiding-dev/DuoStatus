@@ -25,7 +25,7 @@ Needs no permissions.
 
 ## Install
 
-Download the [latest release](https://github.com/zhenweiding-dev/duostatus/releases/latest),
+Download the [latest release](https://github.com/zhenweiding-dev/DuoStatus/releases/latest),
 open the `.dmg`, drag **DuoStatus** into **Applications**.
 
 Not notarized, so the first launch is blocked: **System Settings → Privacy & Security**
