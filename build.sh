@@ -18,6 +18,9 @@ BIN="$(swift build -c release "${ARCHS[@]}" --show-bin-path)/$NAME"
 echo "==> Assembling $APP"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+# Keep build products out of Spotlight, or every rebuild adds another
+# DuoStatus.app to search results.
+touch build/.metadata_never_index .build/.metadata_never_index 2>/dev/null || true
 cp "$BIN" "$APP/Contents/MacOS/$NAME"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 
