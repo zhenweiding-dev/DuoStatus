@@ -11,6 +11,8 @@
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>DuoStatus</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
 	<string>io.github.zhenweiding-dev.duostatus</string>
 	<key>CFBundleInfoDictionaryVersion</key>
