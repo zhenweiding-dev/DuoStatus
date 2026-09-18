@@ -4,25 +4,42 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 NAME="DuoStatus"
-APP="build/$NAME.app"
+OUT="build.noindex"
+APP="$OUT/$NAME.app"
 BUNDLE_ID="io.github.zhenweiding-dev.duostatus"
 VERSION="1.0.0"
 
 # Universal, so the same bundle runs on Apple silicon and Intel.
 ARCHS=(--arch arm64 --arch x86_64)
 
+if [[ "${1:-}" == "--icon" ]]; then
+  echo "==> Generating Resources/AppIcon.icns"
+  SET="$(mktemp -d)/AppIcon.iconset"
+  swiftc -O Sources/$NAME/StatusIcon.swift Sources/$NAME/BatteryMonitor.swift \
+      Sources/$NAME/VolumeMonitor.swift Sources/$NAME/NetworkMonitor.swift \
+      Tools/GenerateIcon.swift -o /tmp/duostatus-icon
+  /tmp/duostatus-icon "$SET"
+  iconutil -c icns "$SET" -o Resources/AppIcon.icns
+  rm -rf "$(dirname "$SET")" /tmp/duostatus-icon
+  echo "Done: Resources/AppIcon.icns"
+  exit 0
+fi
+
+# The icon is generated from the badge code; regenerate it if it went missing.
+[[ -f Resources/AppIcon.icns ]] || "$0" --icon
+
 echo "==> Building (universal)"
-swift build -c release "${ARCHS[@]}"
-BIN="$(swift build -c release "${ARCHS[@]}" --show-bin-path)/$NAME"
+swift build -c release --scratch-path .build.noindex "${ARCHS[@]}"
+BIN="$(swift build -c release --scratch-path .build.noindex "${ARCHS[@]}" --show-bin-path)/$NAME"
 
 echo "==> Assembling $APP"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
-# Keep build products out of Spotlight, or every rebuild adds another
-# DuoStatus.app to search results.
-touch build/.metadata_never_index .build/.metadata_never_index 2>/dev/null || true
+# Build products live in *.noindex directories: Spotlight skips those by name.
+# (.metadata_never_index only works at a volume root, not per directory.)
 cp "$BIN" "$APP/Contents/MacOS/$NAME"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
+cp Resources/AppIcon.icns "$APP/Contents/Resources/"
 
 echo "==> Signing (ad-hoc; fine for local use)"
 codesign --force --sign - --identifier "$BUNDLE_ID" "$APP"
@@ -35,11 +52,11 @@ if [[ "${1:-}" == "--dmg" ]]; then
   ditto "$APP" "$STAGE/$NAME.app"
   xattr -cr "$STAGE/$NAME.app"
   ln -s /Applications "$STAGE/Applications"
-  rm -f "build/$NAME-$VERSION.dmg"
+  rm -f "$OUT/$NAME-$VERSION.dmg"
   hdiutil create -volname "$NAME" -srcfolder "$STAGE" -ov -format UDZO \
-      "build/$NAME-$VERSION.dmg" >/dev/null
+      "$OUT/$NAME-$VERSION.dmg" >/dev/null
   rm -rf "$STAGE"
-  echo "Done: build/$NAME-$VERSION.dmg"
+  echo "Done: $OUT/$NAME-$VERSION.dmg"
   exit 0
 fi
 

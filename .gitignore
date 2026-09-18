@@ -1,6 +1,7 @@
-# Build output
-.build/
-build/
+# Build output. The .noindex suffix keeps Spotlight from indexing these —
+# without it every rebuild adds another DuoStatus.app to search results.
+.build.noindex/
+build.noindex/
 
 # macOS
 .DS_Store
